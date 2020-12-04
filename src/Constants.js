@@ -1,0 +1,10 @@
+export const SECURITY_API_URL = "http://localhost:8080/security"
+export const API_URL = "http://localhost:8080"
+export const USERNAME_ATTRIBUTE_NAME = 'authenticatedUser'
+export const DATE_ATTRIBUTE_NAME = 'date'
+export const USER_MANAGER_ID = '5fbbedd14ebf031968bfa2a8'
+export const ROLE_MANAGER_ID = '5fbc3f3c4ebf031968bfa2c1'
+export const PAGE_MANAGER_ID = '5fbc3f7d4ebf031968bfa2c2'
+export const USER_FORM_ID = '5fbc3fa74ebf031968bfa2c3'
+export const ROLE_FORM_ID = '5fbc3fd54ebf031968bfa2c4'
+export const PAGE_FORM_ID = '5fbc404e4ebf031968bfa2c5'
