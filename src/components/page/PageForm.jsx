@@ -26,7 +26,7 @@ const PageForm = (props) => {
   const [modalContent, setModalContent] = useState('')
   const [pageValid, setPageValid] = useState(true)
   const [state] = useContext(Context) // this is the logged in user state
-  const authService = new AuthenticationService
+  const authService = new AuthenticationService()
   const [error, setError] = useState(false)
   let auth = false
   

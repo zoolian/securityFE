@@ -5,7 +5,6 @@ import { compose } from 'redux'
 import UserService from '../../services/UserService'
 import PageService from '../../services/PageService'
 import UserCard from './UserCard'
-import Spinner from '../ui/Spinner'
 import withNetHandler from '../hoc/withNetErrHandler'
 import AuthenticationService from '../../services/AuthenticationService'
 import { USER_MANAGER_ID as PAGE_ID } from '../../Constants'
@@ -17,7 +16,7 @@ const UserManager = (props) => {
   const [state] = useContext(Context)
   const authService = new AuthenticationService()
   const [error, setError] = useState(false)
-  let auth = false
+  
 
   useEffect(() => {
     if(!authService.loginStatus()) {
@@ -31,6 +30,7 @@ const UserManager = (props) => {
   // comment
   // TODO: change this to backend logic/API call
   useEffect(() => {
+    let auth = false
     if(state.roles.length && !auth) {
       PageService.getPageById(PAGE_ID)
       .then(response => {

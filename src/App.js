@@ -9,9 +9,9 @@ import RoleForm from './components/role/RoleForm'
 import RoleManager from './components/role/RoleManager'
 import PageManager from './components/page/PageManager'
 import PageForm from './components/page/PageForm'
-import Header from './components/Header'
+import Header from './components/ui/Header'
 import Auth from './components/Auth'
-//import AuthenticatedRoute from './components/AuthenticatedRoute'
+import Profile from './components/Profile'
 import Store from './store/Store'
 import Home from './components/Home'
 //import { USER_MANAGER_ID, ROLE_MANAGER_ID, PAGE_MANAGER_ID, USER_FORM_ID, ROLE_FORM_ID, PAGE_FORM_ID } from './Constants'
@@ -19,9 +19,6 @@ import Home from './components/Home'
 import './App.css'
 
 class App extends Component {
-  // constructor() {
-
-  // }
 
   render() {
     return (
@@ -39,6 +36,7 @@ class App extends Component {
             <Route path="/user-form/:id" component={UserForm} />
             <Route path="/role-form/:id" component={RoleForm} />
             <Route path="/page-form/:id" component={PageForm} />
+            <Route path="/profile" component={Profile} />
             {/* <Route path="/logout" component={Logout} /> */}
             <Route path="/auth/signup" render={(props) => <Auth {...props} signUp={true} />} />
             <Route path="/auth/login/:previousPage" render={(props) => <Auth {...props} signUp={false} />} />

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
 import { withRouter } from 'react-router-dom'
 
@@ -7,7 +7,7 @@ import Logo from './Logo'
 
 const Home = (props) => {
 	let {status} = props.match.params
-	const countdown = 4
+	const countdown = status === "logout" ? 4 : 600
 	//const [state, dispath] = useContext(Context)
 	//const [counter, setCounter] = useState(countdown)
 
@@ -18,12 +18,20 @@ const Home = (props) => {
 		</div>
 	)
 
-	const logoutContent = () => {
-    setTimeout(() => props.history.push('/home'), countdown*1000)
+	useEffect(() => {
+		const logoutTimer = () => setTimeout(() => props.history.push('/home'), countdown*1000)
+		const timerId = logoutTimer()
+		return () => {
+			clearTimeout(timerId)
+		}
+	})
+
+	const logoutContent = () => {		
     return (
-      <h3 className="container my-3 mx-4">
-        Successful logout. You will be redirected to the home page in 4 seconds.
-      </h3>
+      <div className="container my-3 mx-4">
+        <h3>Successful logout</h3>
+				<h4>You will be redirected to the home page in {countdown} seconds</h4>
+      </div>
     );
 	}
 	

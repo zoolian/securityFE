@@ -46,7 +46,7 @@ AuthenticationService.prototype.logout = function() {
 }
 
 AuthenticationService.prototype.loginStatus = function() {
-  if(localStorage.getItem(DATE_ATTRIBUTE_NAME) < Date.now()) {
+  if(localStorage.getItem(DATE_ATTRIBUTE_NAME) < new Date().toISOString()) {
     return null
   }
   return localStorage.getItem(USERNAME_ATTRIBUTE_NAME)

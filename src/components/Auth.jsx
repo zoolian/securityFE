@@ -6,11 +6,10 @@ import Input from './ui/Input'
 import validate from '../utils/validate.js'
 import AuthenticationService from '../services/AuthenticationService'
 import {Context} from '../store/Store'
-import { USERNAME_ATTRIBUTE_NAME, DATE_ATTRIBUTE_NAME } from '../Constants'
 
 const Auth = (props) => {
 	//const [password, setPassword] = useState('')
-	const [user, setUser] = useState({
+	const [user, setUser] = useState({  // this is the form user fields
     id: props.match.params.id || null,
     username: '',
 		person: {},
@@ -21,7 +20,7 @@ const Auth = (props) => {
 	const [fetchError, setFetchError] = useState(null)
   const [pageValid, setPageValid] = useState(true)
   const { signUp } = props
-  const authService = new AuthenticationService
+  const authService = new AuthenticationService()
 
 // ----------------------- VALIDATION RULES -----------------------
 	const [usernameValid, setUsernameValid] = useState({
@@ -95,10 +94,7 @@ const Auth = (props) => {
       .catch((error) => {
 				console.log(error)
 			})
-		} else {
-      authService.executeJWTAuthentication(user.username, user.password)
-      //props.history.push("/" + props.match.params.previousPage)
-		}		
+		} else authService.executeJWTAuthentication(user.username, user.password)		
   }
 
   const inputChange = (event, setter, obj, alteration, rule, ruleSetter) => {
@@ -141,7 +137,7 @@ const Auth = (props) => {
           <Input elementType="input" name="lastName" value={user.person.lastName} label="Last Name" isValid={lastNameValid.isValid} show={signUp}
             changed={(event) => {
               inputChange(event, setUser, user, { person: {...user.person, lastName: event.target.value} }, lastNameValid, setLastNameValid)
-            }}          
+            }}
           />
 
           <Input elementType="input" name="email" value={user.person.email} label="Email" isValid={emailValid.isValid} show={signUp}

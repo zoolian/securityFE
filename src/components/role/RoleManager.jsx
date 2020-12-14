@@ -15,8 +15,7 @@ const RoleManager = (props) => {
   const [state] = useContext(Context)
   const authService = new AuthenticationService()
   const [error, setError] = useState(false)
-  let auth = false
-
+  
   useEffect(() => {
     if(!authService.loginStatus()) {
       props.history.push("/auth/login/role-manager")
@@ -27,6 +26,7 @@ const RoleManager = (props) => {
   },[])
 
   useEffect(() => {
+    let auth = false
     if(state.roles.length && !auth) {
       PageService.getPageById(PAGE_ID)
       .then(response => {

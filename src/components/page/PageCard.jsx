@@ -1,8 +1,6 @@
 import React from 'react'
 import { withRouter, Link } from 'react-router-dom'
 
-import PageService from '../../services/PageService';
-
 // use Reactstrap or something similar to dynamically gray cards based on props.enabled
 const PageRow = (props) => {
 

@@ -31,6 +31,14 @@ class UserService {
     return this.instance.post(`/users`, user)
   }
 
+  updatePassword(userId, password) {
+    const passwordObject = {
+      userId,
+      password
+    }
+    return this.instance.put(`/users/secret/${userId}`, passwordObject)
+  }
+
   signup(user) {
     return axios.post('http://localhost:8080/signup', user)
   }
