@@ -16,8 +16,10 @@ const validate = (value, rule) => {
 	if(rule.rules.isNumber) {
 		isValid = Number.isInteger(parseInt(value)) && isValid
 	}
+	if(rule.rules.matches) {
+		isValid = value === rule.rules.matches && isValid
+	}
 
-	//setPageValid(isValid)
 	return isValid;
 }
 

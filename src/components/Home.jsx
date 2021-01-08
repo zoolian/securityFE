@@ -1,15 +1,11 @@
-import React, { useContext, useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom'
 
-import {Context} from '../store/Store'
 import Logo from './Logo'
 
 const Home = (props) => {
 	let {status} = props.match.params
 	const countdown = status === "logout" ? 4 : 600
-	//const [state, dispath] = useContext(Context)
-	//const [counter, setCounter] = useState(countdown)
 
 	const mainContent = (
 		<div className="container my-3 mx-4">

@@ -5,12 +5,13 @@ import { Link, withRouter } from 'react-router-dom'
 const RoleCard = (props) => {
   let { id, name, description, enabled, showDisabled } = props
 
-  const updateRoleClicked = (id) => { // FIX ME: role auth service to verify session didn't timeout before allowing edit. change link field below
-    // if(!AuthenticationService.loginStatus()) {
-    //   this.props.history.push('/login')
-    // }
-    props.history.push(`/role-form/${id}`)
-  }
+  // TODO:
+  // const updateRoleClicked = (id) => { // FIX ME: role auth service to verify session didn't timeout before allowing edit. change link field below
+  //   // if(!AuthenticationService.loginStatus()) {
+  //   //   this.props.history.push('/login')
+  //   // }
+  //   props.history.push(`/role-form/${id}`)
+  // }
 
   if(!enabled && !showDisabled) {
     return null

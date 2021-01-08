@@ -14,6 +14,8 @@ import Auth from './components/Auth'
 import Profile from './components/Profile'
 import Store from './store/Store'
 import Home from './components/Home'
+import PasswordReset from './components/PasswordReset'
+import PasswordResetRequest from './components/PasswordResetRequest'
 //import { USER_MANAGER_ID, ROLE_MANAGER_ID, PAGE_MANAGER_ID, USER_FORM_ID, ROLE_FORM_ID, PAGE_FORM_ID } from './Constants'
 
 import './App.css'
@@ -27,7 +29,7 @@ class App extends Component {
           <Header/>
 
           <Switch>
-            <Route path="/home/:status" component={Home}/>
+            <Route path="/home/:status" component={Home} />
             <Route path="/home" component={Home} />
             {/* The component name should not be what is queried, so use the db ID. */}
             <Route path="/user-manager" component={UserManager} />
@@ -37,6 +39,8 @@ class App extends Component {
             <Route path="/role-form/:id" component={RoleForm} />
             <Route path="/page-form/:id" component={PageForm} />
             <Route path="/profile" component={Profile} />
+            <Route path="/reset/:id" component={PasswordReset} />
+            <Route path="/reset-request" component={PasswordResetRequest} />
             {/* <Route path="/logout" component={Logout} /> */}
             <Route path="/auth/signup" render={(props) => <Auth {...props} signUp={true} />} />
             <Route path="/auth/login/:previousPage" render={(props) => <Auth {...props} signUp={false} />} />

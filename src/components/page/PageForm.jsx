@@ -28,8 +28,7 @@ const PageForm = (props) => {
   const [state] = useContext(Context) // this is the logged in user state
   const authService = new AuthenticationService()
   const [error, setError] = useState(false)
-  let auth = false
-  
+    
   // ----------------------- VALIDATION RULES -----------------------
   const [nameValid, setNameValid] = useState({
     isValid: true,
@@ -100,12 +99,14 @@ const PageForm = (props) => {
   },[])
 
   useEffect(() => {
+    let auth = false
+
     if(state.roles.length && !auth) {
       PageService.getPageById(PAGE_ID)
       .then(response => {
-        state.roles.map(userRole => {
+        state.roles.forEach(userRole => {
           if(response.data.roles.some(pageRole => { return pageRole.id === userRole.id })) {
-            if(page.id != -1) fetchPage()
+            if(page.id !== "new") fetchPage()
             auth = true
           }
           setError(auth ? false : <h3>Access Denied</h3>)
@@ -121,8 +122,8 @@ const PageForm = (props) => {
   useEffect(() => {
     let initialRoles = [...allRoles]
     // if the array exists but the hover property has not been set, and page has been populated, then we're ready to init allRoles
-    if(allRoles.length && allRoles[0].hover === undefined && ( page.name.length || page.id == -1 )) {
-      allRoles.map((role, index) => {
+    if(allRoles.length && allRoles[0].hover === undefined && ( page.name.length || page.id === "new" )) {
+      allRoles.forEach((role, index) => {
         if(page.name.length) {
           initialRoles[index].checked = page.roles.some(pageRole => { return pageRole.id === role.id })
         } else initialRoles[index].checked = false
@@ -138,7 +139,7 @@ const PageForm = (props) => {
   const setPageRoles = (roles) => {    
     let newPageRoles = []
     
-    roles.map((role) => {
+    roles.forEach((role) => {
       role.checked && newPageRoles.push({ id: role.id })
     })
     setPage({...page, roles: newPageRoles})
@@ -153,9 +154,10 @@ const PageForm = (props) => {
     return newRoles
   }
 
-  const onRoleHover = (hover, index) => {
-    alterRole({hover}, index)
-  }
+  // TODO:
+  // const onRoleHover = (hover, index) => {
+  //   alterRole({hover}, index)
+  // }
 
   const onRoleChecked = (checked, index) => {
     setPageRoles(alterRole({checked}, index))
@@ -166,13 +168,14 @@ const PageForm = (props) => {
     setModalHeader(modalHeader.length ? '' : header)
   }
 
-  const deletePageClicked = () => { // FIX ME: verify logged in
-    PageService.deletePage(page.id)
-    .then(response => {
-      console.log(`Piss off ghost ${page.id}! He's frickin gone.`, response)
-      props.loadPosts();
-    })
-  }
+  // TODO:
+  // const deletePageClicked = () => { // FIX ME: verify logged in
+  //   PageService.deletePage(page.id)
+  //   .then(response => {
+  //     console.log(`Piss off ghost ${page.id}! He's frickin gone.`, response)
+  //     props.loadPosts();
+  //   })
+  // }
 
   const onSubmit = (event) => {
 		event.preventDefault()

@@ -21,7 +21,7 @@ const Profile = (props) => {
 	const [showSaveSuccess, setShowSaveSuccess] = useState(false)
 
 	// ----------------------- VALIDATION RULES -----------------------
-		const [passwordValid, setPasswordValid] = useState({
+		const [passwordValid] = useState({
     isValid: true,
     rules: {
       required: true,
@@ -149,7 +149,10 @@ const Profile = (props) => {
             }}
           />
 					<Input elementType="password" name="password" value={password} label="Password" isValid={passwordValid.isValid} show={passwordField}
-            changed={(event) => setPassword(event.target.value)}
+            changed={(event) => {
+							setPassword(event.target.value)
+							validate(event.target.value, pageValid)
+						}}
           />
 
 					<div className="d-flex justify-content-between m-1">
@@ -160,7 +163,7 @@ const Profile = (props) => {
 						</div>
 					</div>					
 				</form>
-				<h2 className={showSaveSuccess ? '' : 'd-none'}>All profile changes successfully saved</h2>
+				<h2 className={showSaveSuccess ? '' : 'd-none'}>Changes successfully saved</h2>
 			</div>
 		</>		
 	) : error

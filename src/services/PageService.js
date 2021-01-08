@@ -21,7 +21,7 @@ class PageService {
   }
 
   createOrUpdatePage(id, page) {
-    if(id != -1) {
+    if(id !== "new") {
       return this.instance.put(`/pages/${id}`, page)
     }
     return this.instance.post(`/pages`, page)

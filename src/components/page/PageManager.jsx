@@ -31,8 +31,8 @@ const PageManager = (props) => {
     if(state.roles.length && !auth) {
       PageService.getPageById(PAGE_ID)
       .then(response => {
-        state.roles.map(userRole => {
-          response.data.roles.some(pageRole => {
+        state.roles.forEach(userRole => {
+          response.data.roles.forEach(pageRole => {
             if (pageRole.id === userRole.id) {
               loadPages()
               auth= true
@@ -65,7 +65,7 @@ const PageManager = (props) => {
   }
 
   const addPageClicked = () => {
-    props.history.push('/page-form/-1')
+    props.history.push('/page-form/new')
   }
 
   // use Reactstrap or something similar to dynamically set btn-primary vs btn-secondary or something
@@ -100,7 +100,3 @@ const PageManager = (props) => {
 }
 
 export default compose(withRouter, withNetHandler)(PageManager, PageService.getInstance())
-{/* <button className="btn-over btn btn-success btn-lg d-flex flex-row-reverse fixed-bottom m-5" onClick={addPageClicked}>Add page for access management</button>
-        <div className="d-flex flex-row-reverse fixed-bottom m-5">
-          <button onClick={onShowDisabledClicked} className={"d-flex flex-row-reverse fixed-bottom m-5" + currentButtonClasses}>{showDisabled ? 'Hide disabled pages' : 'Show disabled pages' }</button>
-        </div> */}

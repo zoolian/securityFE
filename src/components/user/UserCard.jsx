@@ -4,12 +4,13 @@ import { Link, withRouter } from 'react-router-dom'
 // use Reactstrap or something similar to dynamically gray cards based on props.enabled
 const UserCard = (props) => {
 
-  const updateUserClicked = (id) => { // FIX ME: user auth service to verify session didn't timeout before allowing edit. change link field below
-    // if(!AuthenticationService.loginStatus()) {
-    //   this.props.history.push('/login')
-    // }
-    props.history.push(`/user-form/${id}`)
-  }
+  // TODO:
+  // const updateUserClicked = (id) => { // FIX ME: user auth service to verify session didn't timeout before allowing edit. change link field below
+  //   // if(!AuthenticationService.loginStatus()) {
+  //   //   this.props.history.push('/login')
+  //   // }
+  //   props.history.push(`/user-form/${id}`)
+  // }
 
   let { id, username, firstName, lastName, enabled, showDisabled, email, roles } = props
   let roleList = <div><small>No permissions yet</small></div>

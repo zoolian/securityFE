@@ -33,8 +33,7 @@ const UserForm = (props) => {
   const [state] = useContext(Context) // this is the logged in user state
   const authService = new AuthenticationService()
   const [error, setError] = useState(false)
-  let auth = false
-  
+    
   // ----------------------- VALIDATION RULES -----------------------
   const [usernameValid, setUsernameValid] = useState({
     isValid: true,
@@ -103,12 +102,14 @@ const UserForm = (props) => {
   },[])
 
   useEffect(() => {
+    let auth = false
+
     if(state.roles.length && !auth) {
       PageService.getPageById(PAGE_ID)
       .then(response => {
-        state.roles.map(userRole => {
+        state.roles.forEach(userRole => {
           if(response.data.roles.some(pageRole => { return pageRole.id === userRole.id })) {
-            if(user.id != -1) fetchUser()
+            if(user.id !== "new") fetchUser()
             auth = true
           }
           setError(auth ? false : <h3>Access Denied</h3>) // only set access denied if there was never a match in access role IDs
@@ -149,8 +150,8 @@ const UserForm = (props) => {
   useEffect(() => {
     let initialRoles = [...allRoles]
     // if the array exists but the hover property has not been set then we're ready to init allRoles
-    if(allRoles.length && allRoles[0].hover === undefined && ( user.username.length || user.id == -1 )) {
-      allRoles.map((role, index) => {
+    if(allRoles.length && allRoles[0].hover === undefined && ( user.username.length || user.id === "new" )) {
+      allRoles.forEach((role, index) => {
         if(user.username.length) {
           initialRoles[index].checked = user.roles.some(userRole => { return userRole.id === role.id })
         } else initialRoles[index].checked = false
@@ -166,7 +167,7 @@ const UserForm = (props) => {
   const setUserRoles = (roles) => {    
     let newUserRoles = []
     
-    roles.map((role) => {
+    roles.forEach((role) => {
       role.checked && newUserRoles.push({ id: role.id })
     })
     setUser({...user, roles: newUserRoles})
@@ -182,9 +183,9 @@ const UserForm = (props) => {
     return newRoles
   }
   // TODO: grab description on hover
-  const onRoleHover = (hover, index) => {
-    alterRole({hover}, index)
-  }
+  // const onRoleHover = (hover, index) => {
+  //   alterRole({hover}, index)
+  // }
 
   // on a checkbox event, set the page state and the user object for updating on submit
   const onRoleChecked = (checked, index) => {

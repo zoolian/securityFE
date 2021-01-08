@@ -21,7 +21,7 @@ class RoleService {
   }
 
   createOrUpdateRole(id, role) {
-    if(id != -1) {
+    if(id !== "new") {
       return this.instance.put(`/roles/${id}`, role)
     }
     return this.instance.post(`/roles`, role)

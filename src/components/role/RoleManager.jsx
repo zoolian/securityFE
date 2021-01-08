@@ -30,7 +30,7 @@ const RoleManager = (props) => {
     if(state.roles.length && !auth) {
       PageService.getPageById(PAGE_ID)
       .then(response => {
-        state.roles.map(userRole => {
+        state.roles.forEach(userRole => {
           if(response.data.roles.some(pageRole => { return pageRole.id === userRole.id })) {
             loadRoles()
             auth = true
@@ -62,7 +62,7 @@ const RoleManager = (props) => {
   }
 
   const addRoleClicked = () => {
-    props.history.push('/role-form/-1')
+    props.history.push('/role-form/new')
   }
 
   // use Reactstrap or something similar to dynamically set btn-primary vs btn-secondary or something

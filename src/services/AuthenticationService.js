@@ -55,7 +55,7 @@ AuthenticationService.prototype.loginStatus = function() {
 AuthenticationService.prototype.validate = async function() {
   //let pageRoles = []
   await UserService.getUserByUsername(localStorage.getItem(USERNAME_ATTRIBUTE_NAME))  // reload user roles. may have been changed.
-  .then(response => {  
+  .then(response => {
     this.dispatch({ type: 'SET_ROLES', payload: response.data.roles })
     this.dispatch({ type: 'SET_USERNAME', payload: response.data.username })
     this.dispatch({ type: 'SET_LOGIN_STATUS', payload: true })
@@ -74,6 +74,15 @@ AuthenticationService.prototype.validate = async function() {
   })
   return true
 }
+
+AuthenticationService.prototype.sendReset = (email, id) => {
+  return this.axiosInstance.post('/reset/' + id, { email })
+}
+
+// TODO: build API function for validation
+// AuthenticationService.prototype.validateResetUrl = () => {
+
+// }
 
 AuthenticationService.prototype.deployAxiosInterceptors = function() {
   this.axiosInstance.interceptors.response.use(response => {

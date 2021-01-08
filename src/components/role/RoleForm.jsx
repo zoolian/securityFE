@@ -27,8 +27,7 @@ const RoleForm = (props) => {
   const [state] = useContext(Context) // this is the logged in user state
   const authService = new AuthenticationService()
   const [error, setError] = useState(false)
-  let auth = false
-  
+    
   // ----------------------- VALIDATION RULES -----------------------
   const [nameValid, setNameValid] = useState({
     isValid: true,
@@ -83,12 +82,14 @@ const RoleForm = (props) => {
   },[])
 
   useEffect(() => {
+    let auth = false
+
     if(state.roles.length && !auth) {
       PageService.getPageById(PAGE_ID)
       .then(response => {
-        state.roles.map(userRole => {
+        state.roles.forEach(userRole => {
           if(response.data.roles.some(pageRole => { return pageRole.id === userRole.id })) {
-            if(role.id != -1) fetchRole()
+            if(role.id !== "new") fetchRole()
             auth = true
           }
           setError(auth ? false : <h3>Access Denied</h3>)
@@ -106,13 +107,14 @@ const RoleForm = (props) => {
     setModalHeader(modalHeader.length ? '' : header)
   }
 
-  const deleteRoleClicked = () => { // FIX ME: verify logged in
-    RoleService.deleteRole(role.id)
-    .then(response => {
-      console.log(`Piss off ghost ${role.id}! He's frickin gone.`, response)
-      props.history.push("/role-manager")
-    })
-  }
+  // TODO
+  // const deleteRoleClicked = () => { // FIX ME: verify logged in
+  //   RoleService.deleteRole(role.id)
+  //   .then(response => {
+  //     console.log(`Piss off ghost ${role.id}! He's frickin gone.`, response)
+  //     props.history.push("/role-manager")
+  //   })
+  // }
 
   const onSubmit = (event) => {
 		event.preventDefault()
@@ -150,7 +152,7 @@ const RoleForm = (props) => {
   return !error ? (
     <>
       <div>
-        <h1 className="ml-2 d-inline">{role.id != -1 ? `${role.name}` : 'New role'}</h1>
+        <h1 className="ml-2 d-inline">{role.id !== "new" ? `${role.name}` : 'New role'}</h1>
         {role.id ? <small className="m-2 float-right d-inline">ID: {role.id}</small> : ''}
       </div>
       <Modal show={modalContent.length ? true : false} content={modalContent} header={modalHeader} toggle={toggleModal} />

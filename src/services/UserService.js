@@ -19,13 +19,17 @@ class UserService {
   getUserByUsername(username) {
     return this.instance.get(`/users/username/${username}`)
   }
+  
+  getUserByEmail(email) {
+    return this.instance.get(`/users/email/${email}`)
+  }
 
   deleteUser(id) {
     return this.instance.delete(`/users/${id}`)
   }
 
   createOrUpdateUser(id, user) {
-    if(id != -1) {
+    if(id !== "new") {
       return this.instance.put(`/users/${id}`, user)
     }
     return this.instance.post(`/users`, user)
