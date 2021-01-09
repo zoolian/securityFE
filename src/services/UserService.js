@@ -1,9 +1,11 @@
 import axios from 'axios'
 
+import { SECURITY_API_URL, SIGNUP_API_URL } from '../Constants'
+
 class UserService {
   constructor() {
     this.instance = axios.create({
-      baseURL: 'http://localhost:8080/security',
+      baseURL: SECURITY_API_URL,
       withCredentials: true
     })
   }
@@ -44,7 +46,7 @@ class UserService {
   }
 
   signup(user) {
-    return axios.post('http://localhost:8080/signup', user)
+    return axios.post(SIGNUP_API_URL, user)
   }
 
   getInstance() {

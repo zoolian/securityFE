@@ -61,7 +61,7 @@ const PageManager = (props) => {
   }
 
   const onShowDisabledClicked = () => {
-    setShowDisabled(!this.state.showDisabled)
+    setShowDisabled(!showDisabled)
   }
 
   const addPageClicked = () => {

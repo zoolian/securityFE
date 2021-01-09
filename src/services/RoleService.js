@@ -1,9 +1,11 @@
 import axios from 'axios'
 
+import { SECURITY_API_URL } from '../Constants'
+
 class RoleService {
   constructor() {
     this.instance = axios.create({
-      baseURL: 'http://localhost:8080/security',
+      baseURL: SECURITY_API_URL,
       withCredentials: true
     })
   }
