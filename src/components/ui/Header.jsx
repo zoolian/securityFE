@@ -59,6 +59,17 @@ const Header = (props) => {
             <li className="nav-item">
               <NavLink className="nav-link" to="/page-manager">Page Access</NavLink>
             </li>
+            <li className="nav-item dropdown">
+              <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Apps
+              </a>
+              <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a className="dropdown-item" href="https://blog.jmscottnovels.com/">Blog</a>
+                <a className="dropdown-item" href="#">More to Come</a>
+                <div clclassNameass="dropdown-divider"></div>
+                <a className="dropdown-item" href="#">TBD</a>
+              </div>
+            </li>
           </ul>
           {authContent}          
         </div>
