@@ -63,17 +63,17 @@ const Auth = (props) => {
 	useEffect(() => {
     if(!user.id || user.id === "new" || !signUp) {
       return
+    } else {    
+      UserService.getUserById(user.id)
+      .then(response => {
+        setUser(response.data)
+      })
+      .catch(e => { // CONSIDER: forward to error page, or return error div
+        let error = e.message || e.response.data
+        console.log(error)
+        setFetchError(<div>Exception in fetching users: {error}</div>)
+      })
     }
-    
-    UserService.getUserById(user.id)
-    .then(response => {
-      setUser(response.data)
-    })
-    .catch(e => { // CONSIDER: forward to error page, or return error div
-      let error = e.message || e.response.data
-      console.log(error)
-      setFetchError(<div>Exception in fetching users: {error}</div>)
-    })
   },[])
 
   useEffect(() => {
