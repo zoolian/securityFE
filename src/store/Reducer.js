@@ -1,40 +1,34 @@
 const Reducer = (state, action) => {
   switch(action.type) {
     case 'SET_TOKEN':
-      return {
-        ...state,
-        token: action.payload
-      }
+      return { ...state, token: action.payload }
 
     case 'SET_USERNAME':
-      return {
-        ...state,
-        username: action.payload
-      }
+      return { ...state, username: action.payload }
 
+    case 'SET_USERID':
+      return { ...state, id: action.payload }
+
+    case 'SET_PERSON':
+      return { ...state, person: action.payload }
+      
     case 'SET_ROLES':
-      return {
-        ...state,
-        roles: action.payload
-      }
+      return { ...state, roles: action.payload }
 
     case 'ADD_ROLE':
-      return {
-        ...state,
-        roles: state.roles.concat(action.payload)
-      }
+      return { ...state, roles: state.roles.concat(action.payload) }
 
     case 'REMOVE_ROLE':
-      return {
-        ...state,
-        roles: state.roles.filter(role => role.id !== action.payload)
-      }
+      return { ...state, roles: state.roles.filter(role => role.id !== action.payload) }
 
     case 'TOGGLE_LOGIN_STATUS':
       return { ...state, loginStatus: !state.loginStatus }
 
     case 'SET_LOGIN_STATUS':
       return { ...state, loginStatus: action.payload }
+
+    case 'SET_VALIDATION_RESULT':
+      return { ...state, validationResult: action.payload }
 
     case 'TOGGLE_SHOW_LOGIN_FAILED':
       return { ...state, showLoginFailed: !state.showLoginFailed }

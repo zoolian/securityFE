@@ -17,13 +17,21 @@ const RoleManager = (props) => {
   const [error, setError] = useState(false)
   
   useEffect(() => {
+    authService.validate(PAGE_ID)
+  },[])
+
+  useEffect(() => {
     if(!authService.loginStatus()) {
       props.history.push("/auth/login/role-manager")
       return null
     }
 
-    if(!authService.validate(PAGE_ID)) setError(<h3>Token expired</h3>) 
-  },[])
+    if(state.validationResult) {
+      authService.logout()
+      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
+      props.history.push("/auth/login")
+    }
+  },[state.validationResult])
 
   useEffect(() => {
     let auth = false
@@ -43,7 +51,7 @@ const RoleManager = (props) => {
         setError(<h3>Access Denied</h3>)
       })
     }
-  },[state])
+  },[state.id])
 
   const loadRoles = () => {
     RoleService.getRolesAll()

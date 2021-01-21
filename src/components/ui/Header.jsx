@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink, withRouter } from 'react-router-dom'
 import Logo from '../Logo'
 
@@ -7,8 +7,8 @@ import AuthenticationService from '../../services/AuthenticationService.js';
 
 const Header = (props) => {
   const [state, dispatch] = useContext(Context);
+  const [authContent, setAuthContent] = useState("")
   const authService = new AuthenticationService()
-  const username = authService.loginStatus()
 
   const onLogoutClicked = () => {
     dispatch({type: 'SET_TOKEN', payload: ''})
@@ -20,26 +20,27 @@ const Header = (props) => {
 	  props.history.push("/home/logout")
   }
 
-  // authService.loginStatus() or state.loginStatus ??
-  let authContent =  username ? (
-    <ul className="navbar-nav navbar-collapse justify-content-end">
-      <li className="nav-item">
-        <NavLink className="nav-link" to="/profile">Welcome, {username}</NavLink>
-      </li>
-      <li className="nav-item">
-        <span className="nav-link btn" onClick={onLogoutClicked}>Logout</span>
-      </li>
-    </ul>
-  ) : (
-    <ul className="navbar-nav navbar-collapse justify-content-end">
-      <li className="nav-item">
-        <NavLink className="nav-link" to="/auth/login">Login</NavLink>
-      </li>
-      <li className="nav-item">
-        <NavLink className="nav-link" to="/auth/signup">Sign Up</NavLink>
-      </li>
-    </ul>
-  )
+  useEffect(() => {
+    setAuthContent(authService.loginStatus() ? (
+      <ul className="navbar-nav navbar-collapse justify-content-end">
+        <li className="nav-item">
+          <NavLink className="nav-link" to="/profile">Welcome, {authService.loginStatus()}</NavLink>
+        </li>
+        <li className="nav-item">
+          <span className="nav-link btn" onClick={onLogoutClicked}>Logout</span>
+        </li>
+      </ul>
+    ) : (
+      <ul className="navbar-nav navbar-collapse justify-content-end">
+        <li className="nav-item">
+          <NavLink className="nav-link" to="/auth/login">Login</NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink className="nav-link" to="/auth/signup">Sign Up</NavLink>
+        </li>
+      </ul>
+    ))
+  },[state.id, state.loginStatus])
 
   return (
     <header>

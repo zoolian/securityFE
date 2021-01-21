@@ -78,7 +78,7 @@ const Auth = (props) => {
 
   useEffect(() => {
     if(state.loginStatus) { props.history.push("/" + props.match.params.previousPage) }
-  },[state])
+  },[])
 
 	const onSubmit = (event) => {
 		event.preventDefault()

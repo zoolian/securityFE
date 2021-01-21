@@ -33,8 +33,9 @@ AuthenticationService.prototype.registerJWTLogin = function(username, token, dat
   this.dispatch({ type: 'SET_USERNAME', payload: username })
   this.dispatch({ type: 'SET_LOGIN_STATUS', payload: true })
   UserService.getUserByUsername(username)
-  .then(response => {    
+  .then(response => {
     this.dispatch({ type: 'SET_ROLES', payload: response.data.roles })
+    this.dispatch({ type: 'SET_USERID', payload: response.data.id })
   })
   this.deployAxiosInterceptors(token)
 }
@@ -52,27 +53,30 @@ AuthenticationService.prototype.loginStatus = function() {
   return localStorage.getItem(USERNAME_ATTRIBUTE_NAME)
 }
 
-AuthenticationService.prototype.validate = async function() {
-  //let pageRoles = []
-  await UserService.getUserByUsername(localStorage.getItem(USERNAME_ATTRIBUTE_NAME))  // reload user roles. may have been changed.
+AuthenticationService.prototype.validate = function() {
+  UserService.getUserByUsername(localStorage.getItem(USERNAME_ATTRIBUTE_NAME))  // reload user roles. may have been changed.
   .then(response => {
     this.dispatch({ type: 'SET_ROLES', payload: response.data.roles })
     this.dispatch({ type: 'SET_USERNAME', payload: response.data.username })
     this.dispatch({ type: 'SET_LOGIN_STATUS', payload: true })
+    this.dispatch({ type: 'SET_USERID', payload: response.data.id })
+    return true
   })
   .catch(e => {
     console.log(e)
+    this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: "No Profile" })
     return false
   })
 
   this.axiosInstance.get('/validate')
-  .then(() => {    
+  .then(() => {
+    return true
   })
   .catch(e => {
     console.log(e)
+    this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: "Token Expired" })
     return false
-  })
-  return true
+  })  
 }
 
 AuthenticationService.prototype.sendReset = (email, id) => {

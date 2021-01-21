@@ -17,6 +17,9 @@ const UserManager = (props) => {
   const authService = new AuthenticationService()
   const [error, setError] = useState(false)
   
+  useEffect(() => {
+    authService.validate(PAGE_ID)
+  },[])
 
   useEffect(() => {
     if(!authService.loginStatus()) {
@@ -24,8 +27,12 @@ const UserManager = (props) => {
       return null
     }
 
-    if(!authService.validate(PAGE_ID)) { setError(<h3>Token expired</h3>) }
-  },[])
+    if(state.validationResult) {
+      authService.logout()
+      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
+      props.history.push("/auth/login")
+    }
+  },[state.validationResult])
 
   // comment
   // TODO: change this to backend logic/API call
@@ -49,7 +56,7 @@ const UserManager = (props) => {
         setError(<h3>Access Denied</h3>)
       })
     }
-  },[state])
+  },[state.id])
 
   const loadUsers = () => {
     UserService.getUsersAll()

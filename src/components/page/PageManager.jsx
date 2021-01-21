@@ -18,13 +18,21 @@ const PageManager = (props) => {
   const [error, setError] = useState(false)
   
   useEffect(() => {
+    authService.validate(PAGE_ID)
+  },[])
+
+  useEffect(() => {
     if(!authService.loginStatus()) {
       props.history.push("/auth/login/page-manager")
       return
     }
 
-    if(!authService.validate(PAGE_ID)) { setError(<h3>Token expired</h3>) }
-  },[])
+    if(state.validationResult) {
+      authService.logout()
+      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
+      props.history.push("/auth/login")
+    }
+  },[state.validationResult])
 
   useEffect(() => {
     let auth = false
@@ -46,7 +54,7 @@ const PageManager = (props) => {
         setError(<h3>Access Denied</h3>)
       })
     }    
-  },[state])
+  },[state.id])
 
   const loadPages = () => {
     PageService.getPagesAll()

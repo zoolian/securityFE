@@ -3,9 +3,11 @@ import Reducer from './Reducer'
 
 const initialState = {
   token: '',
+  id: '',
   username: '',
   roles: [],
   loginStatus: false,
+  validationResult: '',
   showLoginFailed: false
 }
 
