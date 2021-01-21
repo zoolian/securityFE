@@ -41,7 +41,6 @@ const input = (props) => {
 						{props.options.map(option => (
 							<option key={option.value} value={option.value}>{option.value}</option>
 						))
-
 						}
 					</select>
 				</fieldset>

@@ -52,13 +52,21 @@ const Profile = (props) => {
 	// ----------------------- VALIDATION RULES, END -----------------------
 
 	useEffect(() => {
+    authService.validate(PAGE_ID)
+  },[])
+
+  useEffect(() => {
     if(!authService.loginStatus()) {
       props.history.push("/auth/login/user-manager")
       return null
     }
 
-    if(!authService.validate()) { setError(<h3>Token expired</h3>) }
-	},[])
+    if(state.validationResult) {
+      authService.logout()
+      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
+      props.history.push("/auth/login")
+    }
+  },[state.validationResult])
 	
 	const fetchUser = () => {
 		UserService.getUserByUsername(authService.loginStatus())
