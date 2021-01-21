@@ -63,7 +63,7 @@ const Auth = (props) => {
 	useEffect(() => {
     if(!user.id || user.id === "new" || !signUp) {
       return
-    } else {    
+    } else {
       UserService.getUserById(user.id)
       .then(response => {
         setUser(response.data)
@@ -116,13 +116,13 @@ const Auth = (props) => {
 			<h1 className="ml-2 d-inline">{signUp ? 'Welcome! Create your profile' : 'Enter Credentials'}</h1>
 			<div className="container">
 				<form onSubmit={onSubmit}>
-					<Input elementType="input" name="username" value={user.username} label="Username" isValid={usernameValid.isValid} show={true}
+					<Input elementType="input" name="username" value={user.username} label="Username" isValid={usernameValid.isValid} show={true} autoComplete="false_user"
             changed={(event) => {
               inputChange(event, setUser, user, { username: event.target.value }, usernameValid, setUsernameValid)
             }}
           />
 
-					<Input elementType="password" name="password" value={user.password} label="Password" isValid={passwordValid.isValid} show={true}
+					<Input elementType="password" name="password" value={user.password} label="Password" isValid={passwordValid.isValid} show={true} autoComplete="new-password"
             changed={(event) => {
               inputChange(event, setUser, user, { password: event.target.value }, passwordValid, setPasswordValid)
             }}

@@ -9,7 +9,7 @@ const input = (props) => {
 			inputElement = (
 				<fieldset className='form-group'>
 					<label>{props.label}</label>
-					<input className={'form-control ' + (props.isValid ? '' : errorClasses)} type="text" value={props.value} onChange={props.changed} />
+					<input className={'form-control ' + (props.isValid ? '' : errorClasses)} type="text" value={props.value} onChange={props.changed} autoComplete={props.autoComplete} />
 					{/* <p>{props.invalidMessage}</p> */}
 				</fieldset>
 			)
@@ -19,7 +19,7 @@ const input = (props) => {
 			inputElement = (
 				<fieldset className='form-group'>
 					<label>{props.label}</label>
-					<input className={'form-control ' + (props.isValid ? '' : errorClasses)} type="password" value={props.value} onChange={props.changed} />
+					<input className={'form-control ' + (props.isValid ? '' : errorClasses)} type="password" value={props.value} onChange={props.changed} autoComplete={props.autoComplete} />
 				</fieldset>
 			)
 			break
