@@ -52,7 +52,7 @@ const Profile = (props) => {
 	// ----------------------- VALIDATION RULES, END -----------------------
 
 	useEffect(() => {
-    authService.validate(PAGE_ID)
+    authService.validate()
   },[])
 
   useEffect(() => {
