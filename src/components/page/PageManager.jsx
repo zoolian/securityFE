@@ -18,7 +18,9 @@ const PageManager = (props) => {
   const [error, setError] = useState(false)
   
   useEffect(() => {
-    authService.validate(PAGE_ID)
+    if(authService.loginStatus()) {
+      authService.validate(PAGE_ID)
+    }
   },[])
 
   useEffect(() => {

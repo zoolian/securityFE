@@ -16,9 +16,11 @@ const UserManager = (props) => {
   const [state] = useContext(Context)
   const authService = new AuthenticationService()
   const [error, setError] = useState(false)
-  
+
   useEffect(() => {
-    authService.validate(PAGE_ID)
+    if(authService.loginStatus()) {
+      authService.validate(PAGE_ID)
+    }
   },[])
 
   useEffect(() => {
@@ -34,7 +36,6 @@ const UserManager = (props) => {
     }
   },[state.validationResult])
 
-  // comment
   // TODO: change this to backend logic/API call
   useEffect(() => {
     let auth = false

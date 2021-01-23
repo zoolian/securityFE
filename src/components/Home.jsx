@@ -38,7 +38,6 @@ const Home = (props) => {
         mainContent
         : logoutContent()
       }
-			
 		</>
 	)
 }

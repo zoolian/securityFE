@@ -60,10 +60,12 @@ AuthenticationService.prototype.validate = function() {
     this.dispatch({ type: 'SET_USERNAME', payload: response.data.username })
     this.dispatch({ type: 'SET_LOGIN_STATUS', payload: true })
     this.dispatch({ type: 'SET_USERID', payload: response.data.id })
+    this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: false })
     return true
   })
   .catch(e => {
-    console.log(e)
+    let fetchError = e.message || e.response.data
+    console.log(fetchError)
     this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: "No Profile" })
     return false
   })
@@ -73,7 +75,8 @@ AuthenticationService.prototype.validate = function() {
     return true
   })
   .catch(e => {
-    console.log(e)
+    let fetchError = e.message || e.response.data
+    console.log(fetchError)
     this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: "Token Expired" })
     return false
   })  

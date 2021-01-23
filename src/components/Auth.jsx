@@ -78,7 +78,7 @@ const Auth = (props) => {
 
   useEffect(() => {
     if(state.loginStatus) { props.history.push("/" + props.match.params.previousPage) }
-  },[])
+  },[state.loginStatus]) //////////////
 
 	const onSubmit = (event) => {
 		event.preventDefault()
@@ -94,7 +94,7 @@ const Auth = (props) => {
       .catch((error) => {
 				console.log(error)
 			})
-		} else authService.executeJWTAuthentication(user.username, user.password)		
+		} else authService.executeJWTAuthentication(user.username, user.password)
   }
 
   const inputChange = (event, setter, obj, alteration, rule, ruleSetter) => {

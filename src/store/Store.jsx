@@ -7,7 +7,7 @@ const initialState = {
   username: '',
   roles: [],
   loginStatus: false,
-  validationResult: '',
+  validationResult: false,
   showLoginFailed: false
 }
 
