@@ -77,10 +77,12 @@ const UserForm = (props) => {
   // const errorClasses = 'alert alert-warning py-1 mb-1 small' // add this if we want to show error messages under fields
 
   const loadUser = async(data) => {
-    const { username, enabled, roles, person } = data
+    const { username, firstName, lastName, email, enabled, roles } = data
     await setUser({...user, 
       username,
-      person,
+      firstName,
+		  lastName,
+		  email,
       enabled,
       roles
     })
@@ -91,17 +93,24 @@ const UserForm = (props) => {
   }
 
   useEffect(() => {
+    if(authService.loginStatus()) {
+			authService.validateLocalLogin()			
+    }
+  },[])
+
+  useEffect(() => {
     if(!authService.loginStatus()) {
-      props.history.push("/auth/login")
-      return
+      props.history.push("/auth/login/user-form")
+      return null
     }
 
-    if(!authService.validate(PAGE_ID)) {
-      setError(<div>Token expired</div>)
-      return
-    }
-    loadRoles()
-  },[])
+    if(state.validationResult) {
+      authService.logout()
+      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
+      props.history.push("/auth/login")
+		}
+		loadRoles()
+  },[state.validationResult])
 
   useEffect(() => {
 		if(state.id) {
@@ -145,7 +154,7 @@ const UserForm = (props) => {
   useEffect(() => {
     let initialRoles = [...allRoles]
     // if the array exists but the hover property has not been set then we're ready to init allRoles
-    if(allRoles.length && allRoles[0].hover === undefined && ( user.username.length || user.id === "new" )) {
+    if(allRoles.length && allRoles[0].hover === undefined && ( user.username || user.id === "new" )) {
       allRoles.forEach((role, index) => {
         if(user.username.length) {
           initialRoles[index].checked = user.roles.some(userRole => { return userRole.id === role.id })
@@ -204,14 +213,16 @@ const UserForm = (props) => {
   const onSubmit = (event) => {
     event.preventDefault()
 
-    if(!pageValid) return
-
-    UserService.createOrUpdateUser(user.id, user)
-    .then(() => {
-      props.history.push("/user-manager")
-    }, (error) => {
-      console.log(error)
-    })
+    if(!pageValid) {
+      return null
+    } else {
+      UserService.createOrUpdateUser(user.id, user)
+      .then(() => {
+        props.history.push("/user-manager")
+      }, (error) => {
+        console.log(error)
+      })
+    }
   }
 
   const inputChange = (event, setter, obj, alteration, rule, ruleSetter) => {

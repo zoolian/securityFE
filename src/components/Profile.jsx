@@ -52,12 +52,14 @@ const Profile = (props) => {
 	// ----------------------- VALIDATION RULES, END -----------------------
 
 	useEffect(() => {
-    authService.validate()
+    if(authService.loginStatus()) {
+			authService.validateLocalLogin()
+    }
   },[])
 
   useEffect(() => {
     if(!authService.loginStatus()) {
-      props.history.push("/auth/login/user-manager")
+      props.history.push("/auth/login/profile")
       return null
     }
 
@@ -94,9 +96,8 @@ const Profile = (props) => {
 			resetPage()
     })
     .catch(e => {
-      let error = e.message || e.response.data
-      console.log(error)
-      setError(<div>Exception in saving user: {error}</div>)
+      console.log(e.response.data.message)
+				setError(<div>Exception during PUT: {e.response.data.message}</div>)
 		})
 		
 		if(password) {
@@ -105,9 +106,8 @@ const Profile = (props) => {
 				resetPage()
 			})
 			.catch(e => {
-				let error = e.message || e.response.data
-				console.log(error)
-				setError(<div>Exception in saving password: {error}</div>)
+				console.log(e.response.data.message)
+				setError(<div>Exception during save: {e.response.data.message}</div>)
 			})
 		}
 	}
@@ -139,21 +139,21 @@ const Profile = (props) => {
 			<div className="container">
 				<form onSubmit={onSubmit}>
 					
-					<Input elementType="input" name="firstName" value={user.person.firstName} label="First Name" isValid={firstNameValid.isValid} show={true}
+					<Input elementType="input" name="firstName" value={user.firstName} label="First Name" isValid={firstNameValid.isValid} show={true}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, firstName: event.target.value} }, firstNameValid, setFirstNameValid)
+              inputChange(event, setUser, user, { firstName: event.target.value }, firstNameValid, setFirstNameValid)
             }}
           />
           
-          <Input elementType="input" name="lastName" value={user.person.lastName} label="Last Name" isValid={lastNameValid.isValid} show={true}
+          <Input elementType="input" name="lastName" value={user.lastName} label="Last Name" isValid={lastNameValid.isValid} show={true}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, lastName: event.target.value} }, lastNameValid, setLastNameValid)
+              inputChange(event, setUser, user, { lastName: event.target.value }, lastNameValid, setLastNameValid)
             }}
           />
 
-          <Input elementType="input" name="email" value={user.person.email} label="Email" isValid={emailValid.isValid} show={true}
+          <Input elementType="input" name="email" value={user.email} label="Email" isValid={emailValid.isValid} show={true}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, email: event.target.value} }, emailValid, setEmailValid)
+              inputChange(event, setUser, user, { email: event.target.value }, emailValid, setEmailValid)
             }}
           />
 					<Input elementType="password" name="password" value={password} label="Password" isValid={passwordValid.isValid} show={passwordField}

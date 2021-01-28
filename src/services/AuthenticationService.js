@@ -2,13 +2,13 @@ import { useContext } from 'react'
 import axios from 'axios'
 
 import UserService from './UserService'
-import { USERNAME_ATTRIBUTE_NAME, DATE_ATTRIBUTE_NAME, AUTH_API_URL } from '../Constants'
+import { USERNAME_ATTRIBUTE_NAME, DATE_ATTRIBUTE_NAME, API_URL } from '../Constants'
 import { Context } from '../store/Store'
 
 function AuthenticationService() {
   [this.state, this.dispatch] = useContext(Context)
   this.axiosInstance = axios.create({
-      baseURL: AUTH_API_URL,
+      baseURL: API_URL,
       withCredentials: true
   })
 }
@@ -53,7 +53,7 @@ AuthenticationService.prototype.loginStatus = function() {
   return localStorage.getItem(USERNAME_ATTRIBUTE_NAME)
 }
 
-AuthenticationService.prototype.validate = function() {
+AuthenticationService.prototype.validateLocalLogin = function() {
   UserService.getUserByUsername(localStorage.getItem(USERNAME_ATTRIBUTE_NAME))  // reload user roles. may have been changed.
   .then(response => {
     this.dispatch({ type: 'SET_ROLES', payload: response.data.roles })
@@ -80,6 +80,10 @@ AuthenticationService.prototype.validate = function() {
     this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: "Token Expired" })
     return false
   })  
+}
+
+AuthenticationService.prototype.validatePageAccess = function(pageId, userId) {
+  return this.axiosInstance.get(`/validate-page-access/${pageId}/${userId}`)
 }
 
 AuthenticationService.prototype.sendReset = (email, id) => {

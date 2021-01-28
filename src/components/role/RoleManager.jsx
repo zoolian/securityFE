@@ -18,7 +18,7 @@ const RoleManager = (props) => {
   
   useEffect(() => {
     if(authService.loginStatus()) {
-      authService.validate(PAGE_ID)
+      authService.validateLocalLogin(PAGE_ID)
     }
   },[])
 
@@ -36,24 +36,18 @@ const RoleManager = (props) => {
   },[state.validationResult])
 
   useEffect(() => {
-    let auth = false
-    if(state.roles.length && !auth) {
-      PageService.getPageById(PAGE_ID)
-      .then(response => {
-        state.roles.forEach(userRole => {
-          if(response.data.roles.some(pageRole => { return pageRole.id === userRole.id })) {
-            loadRoles()
-            auth = true
-          }
-          setError(auth ? false : <h3>Access Denied</h3>)
-        })
-      })
-      .catch(e => {
-        console.log(e)
-        setError(<h3>Access Denied</h3>)
-      })
-    }
-  },[state.id])
+		if(state.id) {
+			authService.validatePageAccess(PAGE_ID, state.id)
+			.then(response => {
+				setError(response.data ? false : <h3>Access Denied</h3>)
+				if(response.data) loadRoles()
+			})
+			.catch(e => {
+				console.log(e.response.data.message)
+				setError(<div>Exception in access validation: {e.response.data.message}</div>)
+			})
+		}
+	},[state.id])
 
   const loadRoles = () => {
     RoleService.getRolesAll()

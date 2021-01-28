@@ -46,6 +46,25 @@ const PageForm = (props) => {
   })
   // ----------------------- VALIDATION RULES, END -----------------------
 
+  useEffect(() => {
+    if(authService.loginStatus()) {
+			authService.validateLocalLogin()			
+    }
+  },[])
+
+  useEffect(() => {
+    if(!authService.loginStatus()) {
+      props.history.push("/auth/login/page-form")
+      return null
+    }
+
+    if(state.validationResult) {
+      authService.logout()
+      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
+      props.history.push("/auth/login")
+    }
+    loadRoles()
+  },[state.validationResult])
 
   const loadPage = async(data) => {
 		const { name, enabled, description, roles } = data
@@ -86,38 +105,18 @@ const PageForm = (props) => {
   }
 
   useEffect(() => {
-    if(!authService.loginStatus()) {
-      props.history.push("/auth/login")
-      return
-    }
-
-    if(!authService.validate(PAGE_ID)) {
-      setError(<div>Token expired</div>)
-      return
-    }
-    loadRoles()
-  },[])
-
-  useEffect(() => {
-    let auth = false
-
-    if(state.roles.length && !auth) {
-      PageService.getPageById(PAGE_ID)
-      .then(response => {
-        state.roles.forEach(userRole => {
-          if(response.data.roles.some(pageRole => { return pageRole.id === userRole.id })) {
-            if(page.id !== "new") fetchPage()
-            auth = true
-          }
-          setError(auth ? false : <h3>Access Denied</h3>)
-        })
-      })
-      .catch(e => {
-        console.log(e)
-        setError(<div>Access Denied</div>)
-      })
-    }    
-  },[state])
+		if(state.id) {
+			authService.validatePageAccess(PAGE_ID, state.id)
+			.then(response => {
+				setError(response.data ? false : <h3>Access Denied</h3>)
+				if(response.data && page.id !=="new") fetchPage()
+			})
+			.catch(e => {
+				console.log(e.response.data.message)
+				setError(<div>Exception in access validation: {e.response.data.message}</div>)
+			})
+		}
+  },[state.id])
 
   useEffect(() => {
     let initialRoles = [...allRoles]
@@ -228,16 +227,20 @@ const PageForm = (props) => {
           />
           
           <fieldset>
-            <legend>Roles with access to this page</legend>
+            <legend className="pt-3">Roles with access to this page</legend>
+            <ul className="list-group pb-3">
               {allRoles && allRoles.length > 0 ? (
                 allRoles.map((role, index) => (
-                  <label key={index} >
+                  <li className="list-group-item">
+                    <label key={index} >
                     <input type="checkbox" name={role.id} value={allRoles[index].checked} checked={allRoles[index].checked}
                       onChange={() => onRoleChecked(!allRoles[index].checked, index)}/>
-                  {role.name}</label>
+                    {role.name}</label>
+                  </li>
                 ))
               ) : (<p onClick={() => console.log(allRoles)}>Loading...</p>)
               }
+            </ul>
           </fieldset>
           <input className="btn btn-primary" type="submit" value="Save"/>
         </form>
@@ -247,4 +250,3 @@ const PageForm = (props) => {
 }
 
 export default compose(withRouter, withNetHandler)(PageForm, PageService.getInstance())
-

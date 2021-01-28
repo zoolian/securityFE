@@ -19,14 +19,14 @@ const PageManager = (props) => {
   
   useEffect(() => {
     if(authService.loginStatus()) {
-      authService.validate(PAGE_ID)
+      authService.validateLocalLogin(PAGE_ID)
     }
   },[])
 
   useEffect(() => {
     if(!authService.loginStatus()) {
       props.history.push("/auth/login/page-manager")
-      return
+      return null
     }
 
     if(state.validationResult) {
@@ -37,26 +37,18 @@ const PageManager = (props) => {
   },[state.validationResult])
 
   useEffect(() => {
-    let auth = false
-    if(state.roles.length && !auth) {
-      PageService.getPageById(PAGE_ID)
-      .then(response => {
-        state.roles.forEach(userRole => {
-          response.data.roles.forEach(pageRole => {
-            if (pageRole.id === userRole.id) {
-              loadPages()
-              auth= true
-            }
-            setError(auth ? false : <h3>Access Denied</h3>)
-          })
-        })
-      })
-      .catch(e => {
-        console.log(e)
-        setError(<h3>Access Denied</h3>)
-      })
-    }    
-  },[state.id])
+		if(state.id) {
+			authService.validatePageAccess(PAGE_ID, state.id)
+			.then(response => {
+				setError(response.data ? false : <h3>Access Denied</h3>)
+				if(response.data) loadPages()
+			})
+			.catch(e => {
+				console.log(e.response.data.message)
+				setError(<div>Exception in access validation: {e.response.data.message}</div>)
+			})
+		}
+	},[state.id])
 
   const loadPages = () => {
     PageService.getPagesAll()

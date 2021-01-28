@@ -19,7 +19,7 @@ const UserManager = (props) => {
 
   useEffect(() => {
     if(authService.loginStatus()) {
-      authService.validate(PAGE_ID)
+      authService.validateLocalLogin(PAGE_ID)
     }
   },[])
 

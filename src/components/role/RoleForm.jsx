@@ -45,6 +45,38 @@ const RoleForm = (props) => {
   })
   // ----------------------- VALIDATION RULES, END -----------------------
 
+  useEffect(() => {
+    if(authService.loginStatus()) {
+			authService.validateLocalLogin()
+    }
+  },[])
+
+  useEffect(() => {
+    if(!authService.loginStatus()) {
+      props.history.push("/auth/login/role-form")
+      return null
+    }
+
+    if(state.validationResult) {
+      authService.logout()
+      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
+      props.history.push("/auth/login")
+    }
+  },[state.validationResult])
+
+  useEffect(() => {
+		if(state.id) {
+			authService.validatePageAccess(PAGE_ID, state.id)
+			.then(response => {
+				setError(response.data ? false : <h3>Access Denied</h3>)
+				if(response.data && role.id !=="new") fetchRole()
+			})
+			.catch(e => {
+				console.log(e.response.data.message)
+				setError(<div>Exception in access validation: {e.response.data.message}</div>)
+			})
+		}
+  },[state.id])
 
   const loadRole = async(data) => {
 		const { name, enabled, description, access } = data
@@ -68,18 +100,6 @@ const RoleForm = (props) => {
       setError(<h3>{fetchError}</h3>)
     })
   }
-
-  useEffect(() => {
-    if(!authService.loginStatus()) {
-      props.history.push("/auth/login")
-      return
-    }
-
-    if(!authService.validate(PAGE_ID)) {
-      setError(<div>Token expired</div>)
-      return
-    }
-  },[])
 
   useEffect(() => {
     let auth = false
