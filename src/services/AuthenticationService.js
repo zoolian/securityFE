@@ -2,13 +2,13 @@ import { useContext } from 'react'
 import axios from 'axios'
 
 import UserService from './UserService'
-import { USERNAME_ATTRIBUTE_NAME, DATE_ATTRIBUTE_NAME, API_URL } from '../Constants'
+import { USERNAME_ATTRIBUTE_NAME, DATE_ATTRIBUTE_NAME, AUTH_API_URL } from '../Constants'
 import { Context } from '../store/Store'
 
 function AuthenticationService() {
   [this.state, this.dispatch] = useContext(Context)
   this.axiosInstance = axios.create({
-      baseURL: API_URL,
+      baseURL: AUTH_API_URL,
       withCredentials: true
   })
 }
@@ -86,7 +86,7 @@ AuthenticationService.prototype.sendReset = (email, id) => {
   return this.axiosInstance.post('/reset/' + id, { email })
 }
 
-// TODO: build API function for validation
+// TODO: build API method for password reset url validation
 // AuthenticationService.prototype.validateResetUrl = () => {
 
 // }

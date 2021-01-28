@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link, withRouter } from 'react-router-dom'
 
-// use Reactstrap or something similar to dynamically gray cards based on props.enabled
 const UserCard = (props) => {
 
   // TODO:
@@ -12,7 +11,7 @@ const UserCard = (props) => {
   //   props.history.push(`/user-form/${id}`)
   // }
 
-  let { id, username, firstName, lastName, enabled, showDisabled, email, roles } = props
+  let { id, username, firstName, lastName, email, roles, enabled, showDisabled } = props
   let roleList = <div><small>No permissions yet</small></div>
 
   if(!enabled && !showDisabled) {

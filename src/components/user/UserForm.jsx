@@ -22,7 +22,9 @@ const UserForm = (props) => {
   const [user, setUser] = useStateWithPromise({
     id: props.match.params.id || null,
     username: '',
-    person: {},
+    firstName: '',
+		lastName: '',
+		email: '',
     roles: [],
     enabled: true
   })
@@ -102,25 +104,18 @@ const UserForm = (props) => {
   },[])
 
   useEffect(() => {
-    let auth = false
-
-    if(state.roles.length && !auth) {
-      PageService.getPageById(PAGE_ID)
-      .then(response => {
-        state.roles.forEach(userRole => {
-          if(response.data.roles.some(pageRole => { return pageRole.id === userRole.id })) {
-            if(user.id !== "new") fetchUser()
-            auth = true
-          }
-          setError(auth ? false : <h3>Access Denied</h3>) // only set access denied if there was never a match in access role IDs
-        })
-      })
-      .catch(e => {
-        console.log(e)
-        setError(<div>Access Denied</div>)
-      })
-    }    
-  },[state])
+		if(state.id) {
+			authService.validatePageAccess(PAGE_ID, state.id)
+			.then(response => {
+				setError(response.data ? false : <h3>Access Denied</h3>)
+				if(response.data && user.id !=="new") fetchUser()
+			})
+			.catch(e => {
+				console.log(e.response.data.message)
+				setError(<div>Exception in access validation: {e.response.data.message}</div>)
+			})
+		}
+  },[state.id])
 
   const fetchUser = () => { 
     UserService.getUserById(user.id)
@@ -248,25 +243,25 @@ const UserForm = (props) => {
               inputChange(event, setUser, user, { username: event.target.value }, usernameValid, setUsernameValid)
             }}
           />
-          <Input elementType="input" name="firstName" value={user.person.firstName} label="First Name" isValid={firstNameValid.isValid} show={true}
+          <Input elementType="input" name="firstName" value={user.firstName} label="First Name" isValid={firstNameValid.isValid} show={true}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, firstName: event.target.value} }, firstNameValid, setFirstNameValid)
+              inputChange(event, setUser, user, { firstName: event.target.value}, firstNameValid, setFirstNameValid)
             }}
           />
           
-          <Input elementType="input" name="lastName" value={user.person.lastName} label="Last Name" isValid={lastNameValid.isValid} show={true}
+          <Input elementType="input" name="lastName" value={user.lastName} label="Last Name" isValid={lastNameValid.isValid} show={true}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, lastName: event.target.value} }, lastNameValid, setLastNameValid)
+              inputChange(event, setUser, user, { lastName: event.target.value }, lastNameValid, setLastNameValid)
             }}          
           />
-          <Input elementType="input" name="email" value={user.person.email} label="Email" isValid={emailValid.isValid} show={true}
+          <Input elementType="input" name="email" value={user.email} label="Email" isValid={emailValid.isValid} show={true}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, email: event.target.value} }, emailValid, setEmailValid)
+              inputChange(event, setUser, user, { email: event.target.value }, emailValid, setEmailValid)
             }}
           />
-          <Input elementType="input" name="age" value={user.person.age} label="Age" isValid={ageValid.isValid} show={true}
+          <Input elementType="input" name="age" value={user.age} label="Age" isValid={ageValid.isValid} show={true}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, age: event.target.value} }, ageValid, setAgeValid)
+              inputChange(event, setUser, user, { age: event.target.value }, ageValid, setAgeValid)
             }}
           />
           <Input elementType="checkbox" name="enabled" value={user.enabled} checked={user.enabled} label="Enabled" show={true}

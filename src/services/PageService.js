@@ -1,11 +1,11 @@
 import axios from 'axios'
 
-import { SECURITY_API_URL } from '../Constants'
+import { API_URL } from '../Constants'
 
 class PageService {
   constructor() {
     this.instance = axios.create({
-      baseURL: SECURITY_API_URL,
+      baseURL: API_URL,
       withCredentials: true
     })
   }

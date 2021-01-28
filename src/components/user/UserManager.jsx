@@ -38,26 +38,18 @@ const UserManager = (props) => {
 
   // TODO: change this to backend logic/API call
   useEffect(() => {
-    let auth = false
-    if(state.roles.length && !auth) {
-      PageService.getPageById(PAGE_ID)
-      .then(response => {
-        state.roles.forEach(userRole => {
-          response.data.roles.forEach(pageRole => {
-            if (pageRole.id === userRole.id) {
-              loadUsers()
-              auth = true
-            }
-            setError(auth ? false : <h3>Access Denied</h3>)
-          })
-        })
-      })
-      .catch(e => {
-        console.log(e)
-        setError(<h3>Access Denied</h3>)
-      })
-    }
-  },[state.id])
+		if(state.id) {
+			authService.validatePageAccess(PAGE_ID, state.id)
+			.then(response => {
+				setError(response.data ? false : <h3>Access Denied</h3>)
+				if(response.data) loadUsers()
+			})
+			.catch(e => {
+				console.log(e.response.data.message)
+				setError(<div>Exception in access validation: {e.response.data.message}</div>)
+			})
+		}
+	},[state.id])
 
   const loadUsers = () => {
     UserService.getUsersAll()
@@ -91,7 +83,7 @@ const UserManager = (props) => {
   if(users.length) {
     cards = (        
       users.map((user) => (
-        <UserCard key={user.id} username={user.username} enabled={user.enabled} roles={user.roles} {...user.person} showDisabled={showDisabled} id={user.id} />
+        <UserCard key={user.id} username={user.username} firstName={user.firstName} lastName={user.lastName} email={user.email} enabled={user.enabled} roles={user.roles} showDisabled={showDisabled} id={user.id} />
       ))
     )
   }

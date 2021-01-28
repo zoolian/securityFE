@@ -1,9 +1,9 @@
-export const SECURITY_API_URL = "https://api1.jmscottnovels.com/security"
-export const API_URL = "https://api1.jmscottnovels.com"
-export const SIGNUP_API_URL = 'https://api1.jmscottnovels.com/signup'
-// export const SECURITY_API_URL = "http://localhost:8080/security"
-// export const API_URL = "http://localhost:8080"
-// export const SIGNUP_API_URL = 'http://localhost:8080/signup'
+// export const SECURITY_API_URL = "https://api1.jmscottnovels.com/security"
+// export const API_URL = "https://api1.jmscottnovels.com"
+// export const SIGNUP_API_URL = 'https://api1.jmscottnovels.com/signup'
+export const AUTH_API_URL = "http://localhost:8080/auth"
+export const API_URL = "http://localhost:8080"
+export const SIGNUP_API_URL = 'http://localhost:8080/signup'
 export const USERNAME_ATTRIBUTE_NAME = 'authenticatedUser'
 export const DATE_ATTRIBUTE_NAME = 'date'
 export const USER_MANAGER_ID = '5fbbedd14ebf031968bfa2a8'
