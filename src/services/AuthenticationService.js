@@ -22,7 +22,7 @@ AuthenticationService.prototype.executeJWTAuthentication = function(username, pa
   .catch(e => {
     console.log(e)
     this.dispatch({ type: 'SET_LOGIN_STATUS', payload: false })
-    this.dispatch({ type: 'SET_SHOW_LOGIN_FAILED', payload: false })
+    this.dispatch({ type: 'SET_SHOW_LOGIN_FAILED', payload: true })
     return true
   })
 }
@@ -32,6 +32,7 @@ AuthenticationService.prototype.registerJWTLogin = function(username, token, dat
   localStorage.setItem(DATE_ATTRIBUTE_NAME, date)
   this.dispatch({ type: 'SET_USERNAME', payload: username })
   this.dispatch({ type: 'SET_LOGIN_STATUS', payload: true })
+  this.dispatch({ type: 'SET_SHOW_LOGIN_FAILED', payload: false })
   UserService.getUserByUsername(username)
   .then(response => {
     this.dispatch({ type: 'SET_ROLES', payload: response.data.roles })

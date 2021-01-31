@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom'
 import { compose } from 'redux'
 
 import UserService from '../../services/UserService'
-import PageService from '../../services/PageService'
 import UserCard from './UserCard'
 import withNetHandler from '../hoc/withNetErrHandler'
 import AuthenticationService from '../../services/AuthenticationService'

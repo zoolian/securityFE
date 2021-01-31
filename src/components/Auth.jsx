@@ -16,11 +16,12 @@ const Auth = (props) => {
 		password: '',
     enabled: true
 	})
-	const [state] = useContext(Context);
-	const [fetchError, setFetchError] = useState(null)
+	const [state, dispatch] = useContext(Context)
+	const [error, setError] = useState(null)
   const [pageValid, setPageValid] = useState(true)
   const { signUp } = props
   const authService = new AuthenticationService()
+  const previousPage = props.match.params.previousPage || ''
 
 // ----------------------- VALIDATION RULES -----------------------
 	const [usernameValid, setUsernameValid] = useState({
@@ -61,6 +62,7 @@ const Auth = (props) => {
 	// ----------------------- VALIDATION RULES, END -----------------------
 	
 	useEffect(() => {
+    dispatch({ type: 'SET_SHOW_LOGIN_FAILED', payload: false })
     if(!user.id || user.id === "new" || !signUp) {
       return
     } else {
@@ -71,14 +73,14 @@ const Auth = (props) => {
       .catch(e => { // CONSIDER: forward to error page, or return error div
         let error = e.message || e.response.data
         console.log(error)
-        setFetchError(<div>Exception in fetching users: {error}</div>)
+        setError(<div>Exception in fetching users: {error}</div>)
       })
     }
   },[])
 
   useEffect(() => {
-    if(state.loginStatus) { props.history.push("/" + props.match.params.previousPage) }
-  },[state.loginStatus]) //////////////
+    if(state.loginStatus) { props.history.push("/" + previousPage) }
+  },[state.loginStatus])
 
 	const onSubmit = (event) => {
 		event.preventDefault()
@@ -94,7 +96,7 @@ const Auth = (props) => {
       .catch((error) => {
 				console.log(error)
 			})
-		} else authService.executeJWTAuthentication(user.username, user.password)
+    } else authService.executeJWTAuthentication(user.username, user.password)
   }
 
   const inputChange = (event, setter, obj, alteration, rule, ruleSetter) => {
@@ -103,15 +105,11 @@ const Auth = (props) => {
     if(rule && ruleSetter) {
       ruleSetter({ ...rule, isValid })
 		}
-		setPageValid(isValid)
+    setPageValid(isValid)
+    dispatch({ type: 'SET_SHOW_LOGIN_FAILED', payload: false })
   }
-	
-	if(state.loginStatus) {
-		props.history.push('/user-manager')
-	}
-	if(fetchError) return fetchError
 
-	return (
+	return !error ? (
 		<>
 			<h1 className="ml-2 d-inline">{signUp ? 'Welcome! Create your profile' : 'Enter Credentials'}</h1>
 			<div className="container">
@@ -130,22 +128,25 @@ const Auth = (props) => {
 
 					<Input elementType="input" name="firstName" value={user.person.firstName} label="First Name" isValid={firstNameValid.isValid} show={signUp}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, firstName: event.target.value} }, firstNameValid, setFirstNameValid)
+              inputChange(event, setUser, user, { firstName: event.target.value }, firstNameValid, setFirstNameValid)
             }}
           />
           
           <Input elementType="input" name="lastName" value={user.person.lastName} label="Last Name" isValid={lastNameValid.isValid} show={signUp}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, lastName: event.target.value} }, lastNameValid, setLastNameValid)
+              inputChange(event, setUser, user, { lastName: event.target.value }, lastNameValid, setLastNameValid)
             }}
           />
 
           <Input elementType="input" name="email" value={user.person.email} label="Email" isValid={emailValid.isValid} show={signUp}
             changed={(event) => {
-              inputChange(event, setUser, user, { person: {...user.person, email: event.target.value} }, emailValid, setEmailValid)
+              inputChange(event, setUser, user, { email: event.target.value }, emailValid, setEmailValid)
             }}
           />
-					<input className="btn btn-primary" type="submit" value={signUp ? 'Submit' : 'Login'} />
+					<div className="d-flex justify-content-between">  
+            <input className="btn btn-primary" type="submit" value={signUp ? 'Submit' : 'Login'} />
+            <span className={state.showLoginFailed ? "" : "d-none"}>Incorrect username or password</span>
+          </div>
 				</form>
 				<hr/>
         <div className="d-flex justify-content-between mt-4">
@@ -160,7 +161,7 @@ const Auth = (props) => {
         </div>				
 			</div>
 		</>		
-	)
+	) : error
 }
 
 export default withRouter(Auth)
