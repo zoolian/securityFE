@@ -28,6 +28,10 @@
   box-shadow: 2px 3px 5px #111111;
 }
 
+.white-space {
+  white-space: pre-wrap;
+}
+
 .Loader {
   color: #0000a0;
   font-size: 90px;

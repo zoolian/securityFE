@@ -20,9 +20,11 @@ AuthenticationService.prototype.executeJWTAuthentication = function(username, pa
     return false
   })
   .catch(e => {
-    console.log(e)
+    const fetchError = e.response ? e.response.data.message : e.message
+    console.log(fetchError)
     this.dispatch({ type: 'SET_LOGIN_STATUS', payload: false })
-    this.dispatch({ type: 'SET_SHOW_LOGIN_FAILED', payload: true })
+    this.dispatch({ type: 'SET_SHOW_LOGIN_FAILED', payload: true })    
+    this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: fetchError })
     return true
   })
 }
@@ -33,6 +35,7 @@ AuthenticationService.prototype.registerJWTLogin = function(username, token, dat
   this.dispatch({ type: 'SET_USERNAME', payload: username })
   this.dispatch({ type: 'SET_LOGIN_STATUS', payload: true })
   this.dispatch({ type: 'SET_SHOW_LOGIN_FAILED', payload: false })
+  this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: false })
   UserService.getUserByUsername(username)
   .then(response => {
     this.dispatch({ type: 'SET_ROLES', payload: response.data.roles })
@@ -44,7 +47,12 @@ AuthenticationService.prototype.registerJWTLogin = function(username, token, dat
 AuthenticationService.prototype.logout = function() {
   localStorage.removeItem(USERNAME_ATTRIBUTE_NAME)
   localStorage.removeItem(DATE_ATTRIBUTE_NAME)
-  this.axiosInstance.post('/logout') //, { withCredentials: false }
+  this.axiosInstance.post('/logout')
+  .then(() => { return true },
+    e => {
+      this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: "NETWORK_ERROR" })
+      console.log(e.response ? e.response.data.message : e.message)
+  })
 }
 
 AuthenticationService.prototype.loginStatus = function() {
@@ -55,6 +63,7 @@ AuthenticationService.prototype.loginStatus = function() {
 }
 
 AuthenticationService.prototype.validateLocalLogin = function() {
+  let fetchError = null
   UserService.getUserByUsername(localStorage.getItem(USERNAME_ATTRIBUTE_NAME))  // reload user roles. may have been changed.
   .then(response => {
     this.dispatch({ type: 'SET_ROLES', payload: response.data.roles })
@@ -62,23 +71,22 @@ AuthenticationService.prototype.validateLocalLogin = function() {
     this.dispatch({ type: 'SET_LOGIN_STATUS', payload: true })
     this.dispatch({ type: 'SET_USERID', payload: response.data.id })
     this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: false })
+    this.axiosInstance.get('/validate') // get request and set cookie
+    .then(() => {
+      return true
+    })
+    .catch(e => {
+      fetchError = e.response ? e.response.data.message : e.message
+      console.log(fetchError)
+      this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: fetchError })
+      return false
+    })  
     return true
   })
   .catch(e => {
-    let fetchError = e.message || e.response.data
+    fetchError = e.response ? e.response.data.message : e.message
     console.log(fetchError)
-    this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: "No Profile" })
-    return false
-  })
-
-  this.axiosInstance.get('/validate')
-  .then(() => {
-    return true
-  })
-  .catch(e => {
-    let fetchError = e.message || e.response.data
-    console.log(fetchError)
-    this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: "Token Expired" })
+    this.dispatch({ type: 'SET_VALIDATION_RESULT', payload: fetchError })
     return false
   })  
 }

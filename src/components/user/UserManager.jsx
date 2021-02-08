@@ -4,10 +4,12 @@ import { compose } from 'redux'
 
 import UserService from '../../services/UserService'
 import UserCard from './UserCard'
+import Spinner from '../ui/Spinner'
 import withNetHandler from '../hoc/withNetErrHandler'
 import AuthenticationService from '../../services/AuthenticationService'
 import { USER_MANAGER_ID as PAGE_ID } from '../../Constants'
 import { Context } from '../../store/Store'
+import { handleError } from '../../utils/handleError'
 
 const UserManager = (props) => {
   const [users, setUsers] = useState([])
@@ -30,12 +32,11 @@ const UserManager = (props) => {
 
     if(state.validationResult) {
       authService.logout()
-      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
-      props.history.push("/auth/login")
+      setError(<h3>{state.validationResult}</h3>)
+      setTimeout(() => props.history.push("/auth/login"), 3000)
     }
   },[state.validationResult])
 
-  // TODO: change this to backend logic/API call
   useEffect(() => {
 		if(state.id) {
 			authService.validatePageAccess(PAGE_ID, state.id)
@@ -44,8 +45,7 @@ const UserManager = (props) => {
 				if(response.data) loadUsers()
 			})
 			.catch(e => {
-				console.log(e.response.data.message)
-				setError(<div>Exception in access validation: {e.response.data.message}</div>)
+				setError(handleError(e, "auth: validatePageAccess"))
 			})
 		}
 	},[state.id])
@@ -55,10 +55,8 @@ const UserManager = (props) => {
     .then(response => {
       setUsers(response.data)
     })
-    .catch(e => { // CONSIDER: forward to error page, or return error div
-      let fetchError = e.message || e.response.data
-      console.log(fetchError)
-      setError(<h3>{fetchError}</h3>)
+    .catch(e => { // CONSIDER: forward to error page
+      setError(handleError(e, "user list GET"))
     })
   }
 
@@ -86,6 +84,8 @@ const UserManager = (props) => {
       ))
     )
   }
+
+  if(!error && !cards.length) return <Spinner/>
 
   return !error ? (
     <div className="container-fluid">

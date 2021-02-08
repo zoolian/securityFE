@@ -29,8 +29,8 @@ const RoleManager = (props) => {
 
     if(state.validationResult) {
       authService.logout()
-      setTimeout(() => setError(<h3>{state.validationResult}</h3>), 3000)
-      props.history.push("/auth/login")
+      setError(<h3>{state.validationResult}</h3>)
+      setTimeout(() => props.history.push("/auth/login"), 3000)      
     }
   },[state.validationResult])
 
