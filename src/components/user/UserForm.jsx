@@ -25,6 +25,7 @@ const UserForm = (props) => {
     firstName: '',
 		lastName: '',
 		email: '',
+    age: 0,
     roles: [],
     enabled: true
   })
@@ -35,7 +36,7 @@ const UserForm = (props) => {
   const [state] = useContext(Context) // this is the logged in user state
   const authService = new AuthenticationService()
   const [error, setError] = useState(false)
-    
+
   // ----------------------- VALIDATION RULES -----------------------
   const [usernameValid, setUsernameValid] = useState({
     isValid: true,
@@ -61,7 +62,6 @@ const UserForm = (props) => {
   const [emailValid, setEmailValid] = useState({
     isValid: true,
     rules: {
-      required: true,
       isEmail: true
     }
   })
@@ -74,15 +74,23 @@ const UserForm = (props) => {
   })
   // ----------------------- VALIDATION RULES, END -----------------------
 
-  // const errorClasses = 'alert alert-warning py-1 mb-1 small' // add this if we want to show error messages under fields
+  const validateForm = () => {
+    let isValid = validate(user.firstName, firstNameValid)
+    isValid = validate(user.lastName, lastNameValid)
+    isValid = validate(user.email, emailValid)
+    isValid = validate(user.username, usernameValid)
+    isValid = validate(user.age, ageValid)
+    setPageValid(isValid)
+  }
 
   const loadUser = async(data) => {
-    const { username, firstName, lastName, email, enabled, roles } = data
+    const { username, firstName, lastName, email, age, enabled, roles } = data
     await setUser({...user, 
       username,
       firstName,
 		  lastName,
 		  email,
+      age,
       enabled,
       roles
     })
@@ -119,6 +127,9 @@ const UserForm = (props) => {
 				setError(response.data ? false : <h3>Access Denied</h3>)
 				if(response.data && user.id !=="new") fetchUser()
 			})
+      .then(() => {
+        validateForm()
+      })
 			.catch(e => {
 				console.log(e.response.data.message)
 				setError(<div>Exception in access validation: {e.response.data.message}</div>)
@@ -234,12 +245,11 @@ const UserForm = (props) => {
 		setPageValid(isValid)
 	}
 
-  // CONSIDER: edit button next to each role that routes to the edit page for it
-  if(error) return error
+  // CONSIDER: "edit" button next to each role that routes to the edit page for it
   if(allRoles.length && allRoles[0].hover === undefined) {
     return <Spinner />
   }
-  return (
+  return !error ? (
     <>
       <div>
         <h1 className="ml-2 d-inline">{user.id ? `${user.username}` : 'New user'}</h1>
@@ -248,64 +258,62 @@ const UserForm = (props) => {
       <Modal show={modalContent.length ? true : false} content={modalContent} header={modalHeader} toggle={toggleModal} />
 
       <div className="container">
-        <form onSubmit={onSubmit}>
-          <Input elementType="input" name="username" value={user.username} label="Username" isValid={usernameValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setUser, user, { username: event.target.value }, usernameValid, setUsernameValid)
-            }}
-          />
-          <Input elementType="input" name="firstName" value={user.firstName} label="First Name" isValid={firstNameValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setUser, user, { firstName: event.target.value}, firstNameValid, setFirstNameValid)
-            }}
-          />
-          
-          <Input elementType="input" name="lastName" value={user.lastName} label="Last Name" isValid={lastNameValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setUser, user, { lastName: event.target.value }, lastNameValid, setLastNameValid)
-            }}          
-          />
-          <Input elementType="input" name="email" value={user.email} label="Email" isValid={emailValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setUser, user, { email: event.target.value }, emailValid, setEmailValid)
-            }}
-          />
-          <Input elementType="input" name="age" value={user.age} label="Age" isValid={ageValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setUser, user, { age: event.target.value }, ageValid, setAgeValid)
-            }}
-          />
-          <Input elementType="checkbox" name="enabled" value={user.enabled} checked={user.enabled} label="Enabled" show={true}
-            changed={() => {
-              setUser({...user, enabled: !user.enabled})
-            }}
-          />
-          
-          <fieldset>
-            <legend className="pt-3">User security roles</legend>
-            <ul className="list-group pb-3">
-              {allRoles && allRoles.length > 0 ? (
-                allRoles.map((role, index) => (
-                  <li className="list-group-item">
-                    <label key={index} >
-                    <input key={index} type="checkbox" name={role.id} value={allRoles[index].checked} checked={allRoles[index].checked}
-                      onChange={() => onRoleChecked(!allRoles[index].checked, index)}/>
-                  {role.name}</label>
-                  </li>                  
-                ))
-              ) : (<p>Loading...</p>)
-              }
-            </ul>
-          </fieldset>
-          <input className="btn btn-primary" type="submit" value="Save" />
-        </form>
+        <Input elementType="input" name="username" value={user.username} label="Username" isValid={usernameValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setUser, user, { username: event.target.value }, usernameValid, setUsernameValid)
+          }}
+        />
+        <Input elementType="input" name="firstName" value={user.firstName} label="First Name" isValid={firstNameValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setUser, user, { firstName: event.target.value}, firstNameValid, setFirstNameValid)
+          }}
+        />
+        
+        <Input elementType="input" name="lastName" value={user.lastName} label="Last Name" isValid={lastNameValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setUser, user, { lastName: event.target.value }, lastNameValid, setLastNameValid)
+          }}          
+        />
+        <Input elementType="input" name="email" value={user.email} label="Email" isValid={emailValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setUser, user, { email: event.target.value }, emailValid, setEmailValid)
+          }}
+        />
+        <Input elementType="input" name="age" value={user.age} label="Age" isValid={ageValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setUser, user, { age: event.target.value }, ageValid, setAgeValid)
+          }}
+        />
+        <Input elementType="checkbox" name="enabled" value={user.enabled} checked={user.enabled} label="Enabled" show={true}
+          changed={() => {
+            setUser({...user, enabled: !user.enabled})
+          }}
+        />
+        
+        <fieldset>
+          <legend className="pt-3">User security roles</legend>
+          <ul className="list-group pb-3">
+            {allRoles && allRoles.length > 0 ? (
+              allRoles.map((role, index) => (
+                <li className="list-group-item">
+                  <label key={index} >
+                  <input key={index} type="checkbox" name={role.id} value={allRoles[index].checked} checked={allRoles[index].checked}
+                    onChange={() => onRoleChecked(!allRoles[index].checked, index)}/>
+                {role.name}</label>
+                </li>                  
+              ))
+            ) : (<p>Loading...</p>)
+            }
+          </ul>
+        </fieldset>
+        <button className="btn btn-primary" onClick={onSubmit}>Save</button>
         <button
           className="btn btn-danger float-right delete"
           onClick={() => { if (window.confirm('Delete page? This kick is permanent.')) deleteUserClicked(user.id) } }
         ><small>Delete this user</small></button>
       </div>
     </>
-  )
+  ) : error
 }
 
 UserForm.propTypes = {

@@ -84,7 +84,7 @@ const Auth = (props) => {
 
   // if we are logged in and there was no validation error, head to the desired page
   useEffect(() => {
-    if(state.loginStatus && !state.validationResult) {
+    if(state.loginStatus && !state.validationResult && authService.loginStatus()) {
       props.history.push("/" + previousPage)
     }
     

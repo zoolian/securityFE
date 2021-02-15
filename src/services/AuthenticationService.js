@@ -47,6 +47,7 @@ AuthenticationService.prototype.registerJWTLogin = function(username, token, dat
 AuthenticationService.prototype.logout = function() {
   localStorage.removeItem(USERNAME_ATTRIBUTE_NAME)
   localStorage.removeItem(DATE_ATTRIBUTE_NAME)
+  this.dispatch({ type: 'SET_LOGIN_STATUS', payload: false })
   this.axiosInstance.post('/logout')
   .then(() => { return true },
     e => {

@@ -1,5 +1,11 @@
 import React from 'react'
 
+const onEnter = (event, executeFunc) => {
+	if(event && executeFunc && event.charCode === 13) {
+		executeFunc()
+	}
+}
+
 const input = (props) => {
 	let inputElement = null
 	const errorClasses = "alert alert-danger"
@@ -9,7 +15,7 @@ const input = (props) => {
 			inputElement = (
 				<fieldset className='form-group'>
 					<label>{props.label}</label>
-					<input className={'form-control ' + (props.isValid ? '' : errorClasses)} type="text" value={props.value} onChange={props.changed} autoComplete={props.autoComplete} />
+					<input className={'form-control ' + (props.isValid ? '' : errorClasses)} type="text" value={props.value} onChange={props.changed} autoComplete={props.autoComplete} onKeyPress={(event) => onEnter(event, props.onEnter)}/>
 					{/* <p>{props.invalidMessage}</p> */}
 				</fieldset>
 			)
@@ -19,7 +25,7 @@ const input = (props) => {
 			inputElement = (
 				<fieldset className='form-group'>
 					<label>{props.label}</label>
-					<input className={'form-control ' + (props.isValid ? '' : errorClasses)} type="password" value={props.value} onChange={props.changed} autoComplete={props.autoComplete} />
+					<input className={'form-control ' + (props.isValid ? '' : errorClasses)} type="password" value={props.value} onChange={props.changed}  autoComplete={props.autoComplete}/>
 				</fieldset>
 			)
 			break
@@ -33,14 +39,15 @@ const input = (props) => {
 			)
 			break
 
+		// requires "name" and "id" fields
 		case ('select'):
 			inputElement = (
 				<fieldset className="form-group">
 					<label>{props.label}</label>
 					<select value={props.value} className="form-control" onChange={props.changed} >
 						{props.options.map(option => (
-							<option key={option.value} value={option.value}>{option.value}</option>
-						))
+								<option key={option.id} value={option.id}>{option.name}</option>
+							))
 						}
 					</select>
 				</fieldset>

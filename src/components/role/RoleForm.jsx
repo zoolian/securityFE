@@ -45,6 +45,12 @@ const RoleForm = (props) => {
   })
   // ----------------------- VALIDATION RULES, END -----------------------
 
+  const validateForm = () => {
+    let isValid = validate(role.name, nameValid)
+    isValid = validate(role.description, descriptionValid)
+    setPageValid(isValid)
+  }
+
   useEffect(() => {
     if(authService.loginStatus()) {
 			authService.validateLocalLogin()
@@ -71,6 +77,9 @@ const RoleForm = (props) => {
 				setError(response.data ? false : <h3>Access Denied</h3>)
 				if(response.data && role.id !=="new") fetchRole()
 			})
+      .then(() => {
+        validateForm()
+      })
 			.catch(e => {
 				console.log(e.response.data.message)
 				setError(<div>Exception in access validation: {e.response.data.message}</div>)
@@ -178,45 +187,39 @@ const RoleForm = (props) => {
       <Modal show={modalContent.length ? true : false} content={modalContent} header={modalHeader} toggle={toggleModal} />
 
       <div className="container">
-        <form onSubmit={onSubmit}>
-          <Input elementType="input" name="name" value={role.name} label="Name" isValid={nameValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setRole, role, { name: event.target.value }, nameValid, setNameValid)
-            }}
-          />
+        <Input elementType="input" name="name" value={role.name} label="Name" isValid={nameValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setRole, role, { name: event.target.value }, nameValid, setNameValid)
+          }}
+        />
 
-					<Input elementType="input" name="description" value={role.description} label="Description" isValid={descriptionValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setRole, role, { description: event.target.value }, descriptionValid, setDescriptionValid)
-            }}
-          />
+        <Input elementType="input" name="description" value={role.description} label="Description" isValid={descriptionValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setRole, role, { description: event.target.value }, descriptionValid, setDescriptionValid)
+          }}
+        />
 
-          <Input elementType="checkbox" name="enabled" value={role.enabled} checked={role.enabled} label="Enabled" show={true}
-            changed={() => {
-              setRole({...role, enabled: !role.enabled})
-            }}
-          />
-          
-          <fieldset className="container mt-4">
-            <legend>Access to these site pages</legend>
-							<table className="table table-bordered">
-								<thead>
-									<tr>
-										<th scope="col">
-											Page
-										</th>
-										<th scope="col">
-                      Add a Query on the pages to show a list here
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{accessPages}
-								</tbody>
-							</table>
-          </fieldset>
-          <input className="btn btn-primary" type="submit" value="Save"/>
-        </form>
+        <Input elementType="checkbox" name="enabled" value={role.enabled} checked={role.enabled} label="Enabled" show={true}
+          changed={() => {
+            setRole({...role, enabled: !role.enabled})
+          }}
+        />
+        
+        <fieldset className="container mt-4">
+          <legend>Access to these site pages</legend>
+            <table className="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">Page</th>
+                  <th scope="col">Add a Query on the pages to show a list here</th>
+                </tr>
+              </thead>
+              <tbody>
+                {accessPages}
+              </tbody>
+            </table>
+        </fieldset>
+        <button className="btn btn-primary" onClick={onSubmit}>Save</button>
       </div>
     </>
   ) : error

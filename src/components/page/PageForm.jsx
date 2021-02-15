@@ -45,10 +45,15 @@ const PageForm = (props) => {
     }
   })
   // ----------------------- VALIDATION RULES, END -----------------------
+  const validateForm = () => {
+    let isValid = validate(page.name, nameValid)
+    isValid = validate(page.description, descriptionValid)
+    setPageValid(isValid)
+  }
 
   useEffect(() => {
     if(authService.loginStatus()) {
-			authService.validateLocalLogin()			
+			authService.validateLocalLogin()
     }
   },[])
 
@@ -111,6 +116,9 @@ const PageForm = (props) => {
 				setError(response.data ? false : <h3>Access Denied</h3>)
 				if(response.data && page.id !=="new") fetchPage()
 			})
+      .then(() => {
+        validateForm()
+      })
 			.catch(e => {
 				console.log(e.response.data.message)
 				setError(<div>Exception in access validation: {e.response.data.message}</div>)
@@ -198,7 +206,7 @@ const PageForm = (props) => {
 		setPageValid(isValid)
 	}
 
-   return !error ? (
+  return !error ? (
     <>
       <div>
         <h1 className="ml-2 d-inline">{page.id ? `Permissions for the ${page.name} page` : 'New page'}</h1>
@@ -207,43 +215,41 @@ const PageForm = (props) => {
       <Modal show={modalContent.length ? true : false} content={modalContent} header={modalHeader} toggle={toggleModal} />
 
       <div className="container">
-        <form onSubmit={onSubmit}>
-          <Input elementType="input" name="name" value={page.name} label="Name" isValid={nameValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setPage, page, { name: event.target.value }, nameValid, setNameValid)
-            }}
-          />
+        <Input elementType="input" name="name" value={page.name} label="Name" isValid={nameValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setPage, page, { name: event.target.value }, nameValid, setNameValid)
+          }}
+        />
 
-					<Input elementType="input" name="description" value={page.description} label="Description" isValid={descriptionValid.isValid} show={true}
-            changed={(event) => {
-              inputChange(event, setPage, page, { description: event.target.value }, descriptionValid, setDescriptionValid)
-            }}
-          />
+        <Input elementType="input" name="description" value={page.description} label="Description" isValid={descriptionValid.isValid} show={true}
+          changed={(event) => {
+            inputChange(event, setPage, page, { description: event.target.value }, descriptionValid, setDescriptionValid)
+          }}
+        />
 
-          <Input elementType="checkbox" name="enabled" value={page.enabled} checked={page.enabled} label="Enabled" show={true}
-            changed={() => {
-              setPage({...page, enabled: !page.enabled})
-            }}
-          />
-          
-          <fieldset>
-            <legend className="pt-3">Roles with access to this page</legend>
-            <ul className="list-group pb-3">
-              {allRoles && allRoles.length > 0 ? (
-                allRoles.map((role, index) => (
-                  <li className="list-group-item">
-                    <label key={index} >
-                    <input type="checkbox" name={role.id} value={allRoles[index].checked} checked={allRoles[index].checked}
-                      onChange={() => onRoleChecked(!allRoles[index].checked, index)}/>
-                    {role.name}</label>
-                  </li>
-                ))
-              ) : (<p onClick={() => console.log(allRoles)}>Loading...</p>)
-              }
-            </ul>
-          </fieldset>
-          <input className="btn btn-primary" type="submit" value="Save"/>
-        </form>
+        <Input elementType="checkbox" name="enabled" value={page.enabled} checked={page.enabled} label="Enabled" show={true}
+          changed={() => {
+            setPage({...page, enabled: !page.enabled})
+          }}
+        />
+        
+        <fieldset>
+          <legend className="pt-3">Roles with access to this page</legend>
+          <ul className="list-group pb-3">
+            {allRoles && allRoles.length > 0 ? (
+              allRoles.map((role, index) => (
+                <li className="list-group-item">
+                  <label key={index} >
+                  <input type="checkbox" name={role.id} value={allRoles[index].checked} checked={allRoles[index].checked}
+                    onChange={() => onRoleChecked(!allRoles[index].checked, index)}/>
+                  {role.name}</label>
+                </li>
+              ))
+            ) : (<p onClick={() => console.log(allRoles)}>Loading...</p>)
+            }
+          </ul>
+        </fieldset>
+        <button className="btn btn-primary" onClick={onSubmit}>Save</button>
       </div>
     </>
   ) : error
